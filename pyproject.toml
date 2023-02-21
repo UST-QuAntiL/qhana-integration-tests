@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "pythonproject"
+version = "0.1.0"
+description = ""
+authors = ["Philipp Wundrack <philipp.wundrack@live.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+selenium = "^4.8.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
