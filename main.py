@@ -11,26 +11,25 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 class WebElementWrapper:
 	def __init__(self, driver: WebDriver, xpath: str):
-		self.element = driver.find_element(By.XPATH, xpath)
 		self.driver = driver
 		self.xpath = xpath
 
 	def click(self) -> None:
 		try:
 			time.sleep(1)
-			self.element.click()
+			element = self.driver.find_element(By.XPATH, self.xpath)
+			element.click()
 		except StaleElementReferenceException:
 			print(f"StaleElementReferenceException: trying to find {self.xpath}")
-			self.element = self.driver.find_element(By.XPATH, self.xpath)
 			self.click()
 
 	def switch_to_frame(self) -> None:
 		try:
 			time.sleep(1)
-			self.driver.switch_to.frame(self.element)
+			element = self.driver.find_element(By.XPATH, self.xpath)
+			self.driver.switch_to.frame(element)
 		except StaleElementReferenceException:
 			print(f"StaleElementReferenceException: trying to find {self.xpath}")
-			self.element = self.driver.find_element(By.XPATH, self.xpath)
 			self.switch_to_frame()
 
 
