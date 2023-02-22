@@ -15,6 +15,20 @@ class WebElementWrapper:
 		self.driver = driver
 		self.find_method = find_method
 
+	@staticmethod
+	def find_with_xpath(driver: WebDriver, xpath: str) -> "WebElementWrapper":
+		def _find_method() -> WebElement:
+			return driver.find_element(By.XPATH, xpath)
+
+		return WebElementWrapper(driver, _find_method)
+
+	@staticmethod
+	def find_active_element(driver: WebDriver) -> "WebElementWrapper":
+		def _find_method() -> WebElement:
+			return driver.switch_to.active_element
+
+		return WebElementWrapper(driver, _find_method)
+
 	def click(self) -> None:
 		try:
 			time.sleep(1)
@@ -51,20 +65,6 @@ class WebElementWrapper:
 		except StaleElementReferenceException:
 			print(f"StaleElementReferenceException")
 			self.set_text(text)
-
-	@staticmethod
-	def find_with_xpath(driver: WebDriver, xpath: str) -> "WebElementWrapper":
-		def _find_method() -> WebElement:
-			return driver.find_element(By.XPATH, xpath)
-
-		return WebElementWrapper(driver, _find_method)
-
-	@staticmethod
-	def find_active_element(driver: WebDriver) -> "WebElementWrapper":
-		def _find_method() -> WebElement:
-			return driver.switch_to.active_element
-
-		return WebElementWrapper(driver, _find_method)
 
 
 class TestPluginExecution(unittest.TestCase):
@@ -131,12 +131,6 @@ class TestPluginExecution(unittest.TestCase):
 		output_text2 = WebElementWrapper.find_with_xpath(self.driver, "//pre")
 		assert output_text2.get_text() == "Processed in the processing step: input text Input from preprocessing: input text"
 		self.driver.switch_to.default_content()
-
-	@staticmethod
-	def _get_frontend_iframe(driver: WebDriver) -> WebElement:
-		iframe = driver.find_element(By.XPATH, "//iframe[@class='frontend-frame']")
-
-		return iframe
 
 	@staticmethod
 	def _check_if_finished(driver: WebDriver):
