@@ -11,6 +11,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 class TestPluginExecution(unittest.TestCase):
 	def setUp(self) -> None:
 		self.driver = webdriver.Firefox()
+		self.driver.get("http://localhost:8080")
+		self.driver.implicitly_wait(10)
 
 	def tearDown(self) -> None:
 		self.driver.close()
@@ -19,9 +21,6 @@ class TestPluginExecution(unittest.TestCase):
 		pass
 
 	def test_hello_world_multi_step(self):
-		self.driver.get("http://localhost:8080")
-		self.driver.implicitly_wait(10)
-
 		new_experiment_button = self.driver.find_element(By.XPATH, "//button[span[text()='New Experiment']]")
 		new_experiment_button.click()
 
