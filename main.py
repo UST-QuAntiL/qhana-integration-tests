@@ -1,5 +1,6 @@
 import time
 import unittest
+from typing import Optional, Callable
 
 from selenium import webdriver
 from selenium.common import StaleElementReferenceException
@@ -10,32 +11,60 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 class WebElementWrapper:
-	def __init__(self, driver: WebDriver, xpath: str):
+	def __init__(self, driver: WebDriver, find_method: Callable[[], WebElement]):
 		self.driver = driver
-		self.xpath = xpath
+		self.find_method = find_method
 
 	def click(self) -> None:
 		try:
 			time.sleep(1)
-			element = self.driver.find_element(By.XPATH, self.xpath)
+			element = self.find_method()
 			element.click()
 		except StaleElementReferenceException:
-			print(f"StaleElementReferenceException: trying to find {self.xpath}")
+			print(f"StaleElementReferenceException")
 			self.click()
 
 	def switch_to_frame(self) -> None:
 		try:
 			time.sleep(1)
-			element = self.driver.find_element(By.XPATH, self.xpath)
+			element = self.find_method()
 			self.driver.switch_to.frame(element)
 		except StaleElementReferenceException:
-			print(f"StaleElementReferenceException: trying to find {self.xpath}")
+			print(f"StaleElementReferenceException")
 			self.switch_to_frame()
 
+	def get_text(self) -> str:
+		try:
+			time.sleep(1)
+			element = self.find_method()
 
-def _get_active_element(driver: WebDriver) -> WebElement:
-	time.sleep(1)
-	return driver.switch_to.active_element
+			return element.text
+		except StaleElementReferenceException:
+			print(f"StaleElementReferenceException")
+			return self.get_text()
+
+	def set_text(self, text: str) -> None:
+		try:
+			time.sleep(1)
+			element = self.find_method()
+			element.send_keys(text)
+		except StaleElementReferenceException:
+			print(f"StaleElementReferenceException")
+			self.set_text(text)
+
+	@staticmethod
+	def find_with_xpath(driver: WebDriver, xpath: str) -> "WebElementWrapper":
+		def _find_method() -> WebElement:
+			return driver.find_element(By.XPATH, xpath)
+
+		return WebElementWrapper(driver, _find_method)
+
+	@staticmethod
+	def find_active_element(driver: WebDriver) -> "WebElementWrapper":
+		def _find_method() -> WebElement:
+			return driver.switch_to.active_element
+
+		return WebElementWrapper(driver, _find_method)
 
 
 class TestPluginExecution(unittest.TestCase):
@@ -51,56 +80,56 @@ class TestPluginExecution(unittest.TestCase):
 		pass
 
 	def test_hello_world_multi_step(self):
-		new_experiment_button = WebElementWrapper(self.driver, "//button[span[text()='New Experiment']]")
+		new_experiment_button = WebElementWrapper.find_with_xpath(self.driver, "//button[span[text()='New Experiment']]")
 		new_experiment_button.click()
 
-		_get_active_element(self.driver).send_keys("test")
+		WebElementWrapper.find_active_element(self.driver).set_text("test")
 
-		create_experiment_button = WebElementWrapper(self.driver, "//button[span[normalize-space(text())='Create Experiment']]")
+		create_experiment_button = WebElementWrapper.find_with_xpath(self.driver, "//button[span[normalize-space(text())='Create Experiment']]")
 		create_experiment_button.click()
 
-		workspace_tab = WebElementWrapper(self.driver, "//a[span[normalize-space(text())='Workspace']]")
+		workspace_tab = WebElementWrapper.find_with_xpath(self.driver, "//a[span[normalize-space(text())='Workspace']]")
 		workspace_tab.click()
 
-		hello_world_multi_step_list_item = WebElementWrapper(self.driver, "//span[starts-with(text(), 'hello-world-multi-step')]")
+		hello_world_multi_step_list_item = WebElementWrapper.find_with_xpath(self.driver, "//span[starts-with(text(), 'hello-world-multi-step')]")
 		hello_world_multi_step_list_item.click()
 
-		frontend_iframe = WebElementWrapper(self.driver, "//iframe[@class='frontend-frame']")
+		frontend_iframe = WebElementWrapper.find_with_xpath(self.driver, "//iframe[@class='frontend-frame']")
 		frontend_iframe.switch_to_frame()
 
-		input_field = self.driver.find_element(By.XPATH, "//textarea[@name='inputStr']")
-		input_field.send_keys("input text")
+		input_field = WebElementWrapper.find_with_xpath(self.driver, "//textarea[@name='inputStr']")
+		input_field.set_text("input text")
 
-		submit_button = WebElementWrapper(self.driver, "//button[@class='qhana-form-submit'][text()='submit']")
+		submit_button = WebElementWrapper.find_with_xpath(self.driver, "//button[@class='qhana-form-submit'][text()='submit']")
 		submit_button.click()
 
 		self.driver.switch_to.default_content()
 
-		substep1_iframe = WebElementWrapper(self.driver, "//iframe[@class='frontend-frame']")
+		substep1_iframe = WebElementWrapper.find_with_xpath(self.driver, "//iframe[@class='frontend-frame']")
 		substep1_iframe.switch_to_frame()
 
-		substep1_submit_button = WebElementWrapper(self.driver, "//button[@class='qhana-form-submit'][text()='submit']")
+		substep1_submit_button = WebElementWrapper.find_with_xpath(self.driver, "//button[@class='qhana-form-submit'][text()='submit']")
 		substep1_submit_button.click()
 
 		self.driver.switch_to.default_content()
 
 		WebDriverWait(self.driver, timeout=10).until(self._check_if_finished)
 
-		output_tab = WebElementWrapper(self.driver, "//a[normalize-space(text())='Outputs']")
+		output_tab = WebElementWrapper.find_with_xpath(self.driver, "//a[normalize-space(text())='Outputs']")
 		output_tab.click()
 
-		preview_iframe1 = WebElementWrapper(self.driver, "//iframe[contains(@src, 'output1.txt')]")
+		preview_iframe1 = WebElementWrapper.find_with_xpath(self.driver, "//iframe[contains(@src, 'output1.txt')]")
 		preview_iframe1.switch_to_frame()
 
-		output_text1 = self.driver.find_element(By.XPATH, "//pre")
-		assert output_text1.text == "Processed in the preprocessing step: input text"
+		output_text1 = WebElementWrapper.find_with_xpath(self.driver, "//pre")
+		assert output_text1.get_text() == "Processed in the preprocessing step: input text"
 		self.driver.switch_to.default_content()
 
-		preview_iframe2 = WebElementWrapper(self.driver, "//iframe[contains(@src, 'output2.txt')]")
+		preview_iframe2 = WebElementWrapper.find_with_xpath(self.driver, "//iframe[contains(@src, 'output2.txt')]")
 		preview_iframe2.switch_to_frame()
 
-		output_text2 = self.driver.find_element(By.XPATH, "//pre")
-		assert output_text2.text == "Processed in the processing step: input text Input from preprocessing: input text"
+		output_text2 = WebElementWrapper.find_with_xpath(self.driver, "//pre")
+		assert output_text2.get_text() == "Processed in the processing step: input text Input from preprocessing: input text"
 		self.driver.switch_to.default_content()
 
 	@staticmethod
