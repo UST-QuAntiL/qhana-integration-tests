@@ -84,25 +84,17 @@ class TestPluginExecution(unittest.TestCase):
 		self._switch_to_workspace_tab(self.driver)
 		self._open_plugin(self.driver, "hello-world-multi-step")
 
-		frontend_iframe = self._get_micro_frontend_iframe(self.driver)
-		frontend_iframe.switch_to_frame()
-
-		input_field = self._get_micro_frontend_input_field(self.driver, "inputStr")
-		input_field.set_text("input text")
-
+		self._get_micro_frontend_iframe(self.driver).switch_to_frame()
+		self._get_micro_frontend_input_field(self.driver, "inputStr").set_text("input text")
 		self._submit_micro_frontend(self.driver)
 
 		self.driver.switch_to.default_content()
 
-		substep1_iframe = self._get_micro_frontend_iframe(self.driver)
-		substep1_iframe.switch_to_frame()
-
+		self._get_micro_frontend_iframe(self.driver).switch_to_frame()
 		self._submit_micro_frontend(self.driver)
 
 		self.driver.switch_to.default_content()
-
-		WebDriverWait(self.driver, timeout=10).until(self._check_if_finished)
-
+		self._wait_for_plugin_to_finish_executing(self.driver, 10)
 		self._switch_to_outputs_tab(self.driver)
 
 		assert self._get_output_file_text(self.driver, "output1.txt") == "Processed in the preprocessing step: input text"
@@ -164,13 +156,16 @@ class TestPluginExecution(unittest.TestCase):
 		return text
 
 	@staticmethod
-	def _check_if_finished(driver: WebDriver):
-		status = driver.find_element(By.XPATH, "//div[@class='step-status']/span").text
+	def _wait_for_plugin_to_finish_executing(driver: WebDriver, timeout: int) -> None:
+		def _check_if_finished(_driver: WebDriver):
+			status = _driver.find_element(By.XPATH, "//div[@class='step-status']/span").text
 
-		if status == "PENDING":
-			return False
+			if status == "PENDING":
+				return False
 
-		if status == "SUCCESS":
-			return True
+			if status == "SUCCESS":
+				return True
 
-		raise RuntimeError(f"status is {status}")
+			raise RuntimeError(f"status is {status}")
+
+		WebDriverWait(driver, timeout=timeout).until(_check_if_finished)
