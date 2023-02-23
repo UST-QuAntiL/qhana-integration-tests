@@ -77,60 +77,91 @@ class TestPluginExecution(unittest.TestCase):
 		self.driver.close()
 
 	def test_create_new_experiment(self):
-		pass
+		self._create_new_experiment(self.driver, "test")
 
 	def test_hello_world_multi_step(self):
-		new_experiment_button = WebElementWrapper.find_with_xpath(self.driver, "//button[span[text()='New Experiment']]")
-		new_experiment_button.click()
+		self._create_new_experiment(self.driver, "test")
+		self._switch_to_workspace_tab(self.driver)
+		self._open_plugin(self.driver, "hello-world-multi-step")
 
-		WebElementWrapper.find_active_element(self.driver).set_text("test")
-
-		create_experiment_button = WebElementWrapper.find_with_xpath(self.driver, "//button[span[normalize-space(text())='Create Experiment']]")
-		create_experiment_button.click()
-
-		workspace_tab = WebElementWrapper.find_with_xpath(self.driver, "//a[span[normalize-space(text())='Workspace']]")
-		workspace_tab.click()
-
-		hello_world_multi_step_list_item = WebElementWrapper.find_with_xpath(self.driver, "//span[starts-with(text(), 'hello-world-multi-step')]")
-		hello_world_multi_step_list_item.click()
-
-		frontend_iframe = WebElementWrapper.find_with_xpath(self.driver, "//iframe[@class='frontend-frame']")
+		frontend_iframe = self._get_micro_frontend_iframe(self.driver)
 		frontend_iframe.switch_to_frame()
 
-		input_field = WebElementWrapper.find_with_xpath(self.driver, "//textarea[@name='inputStr']")
+		input_field = self._get_micro_frontend_input_field(self.driver, "inputStr")
 		input_field.set_text("input text")
 
-		submit_button = WebElementWrapper.find_with_xpath(self.driver, "//button[@class='qhana-form-submit'][text()='submit']")
-		submit_button.click()
+		self._submit_micro_frontend(self.driver)
 
 		self.driver.switch_to.default_content()
 
-		substep1_iframe = WebElementWrapper.find_with_xpath(self.driver, "//iframe[@class='frontend-frame']")
+		substep1_iframe = self._get_micro_frontend_iframe(self.driver)
 		substep1_iframe.switch_to_frame()
 
-		substep1_submit_button = WebElementWrapper.find_with_xpath(self.driver, "//button[@class='qhana-form-submit'][text()='submit']")
-		substep1_submit_button.click()
+		self._submit_micro_frontend(self.driver)
 
 		self.driver.switch_to.default_content()
 
 		WebDriverWait(self.driver, timeout=10).until(self._check_if_finished)
 
-		output_tab = WebElementWrapper.find_with_xpath(self.driver, "//a[normalize-space(text())='Outputs']")
+		self._switch_to_outputs_tab(self.driver)
+
+		assert self._get_output_file_text(self.driver, "output1.txt") == "Processed in the preprocessing step: input text"
+		assert self._get_output_file_text(self.driver, "output2.txt") == "Processed in the processing step: input text Input from preprocessing: input text"
+
+	@staticmethod
+	def _create_new_experiment(driver: WebDriver, name: str) -> None:
+		new_experiment_button = WebElementWrapper.find_with_xpath(
+			driver, "//button[span[text()='New Experiment']]")
+		new_experiment_button.click()
+
+		WebElementWrapper.find_active_element(driver).set_text(name)
+
+		create_experiment_button = WebElementWrapper.find_with_xpath(
+			driver, "//button[span[normalize-space(text())='Create Experiment']]")
+		create_experiment_button.click()
+
+	@staticmethod
+	def _switch_to_workspace_tab(driver: WebDriver) -> None:
+		workspace_tab = WebElementWrapper.find_with_xpath(driver, "//a[span[normalize-space(text())='Workspace']]")
+		workspace_tab.click()
+
+	@staticmethod
+	def _open_plugin(driver: WebDriver, plugin_name: str) -> None:
+		plugin_list_item = WebElementWrapper.find_with_xpath(
+			driver, f"//span[starts-with(text(), '{plugin_name}')]")
+		plugin_list_item.click()
+
+	@staticmethod
+	def _get_micro_frontend_iframe(driver: WebDriver) -> WebElementWrapper:
+		return WebElementWrapper.find_with_xpath(driver, "//iframe[@class='frontend-frame']")
+
+	@staticmethod
+	def _get_micro_frontend_input_field(driver: WebDriver, field_name: str) -> WebElementWrapper:
+		return WebElementWrapper.find_with_xpath(driver, f"//textarea[@name='{field_name}']")
+
+	@staticmethod
+	def _submit_micro_frontend(driver: WebDriver) -> None:
+		submit_button = WebElementWrapper.find_with_xpath(
+			driver, "//button[@class='qhana-form-submit'][text()='submit']")
+		submit_button.click()
+
+	@staticmethod
+	def _switch_to_outputs_tab(driver: WebDriver) -> None:
+		output_tab = WebElementWrapper.find_with_xpath(driver, "//a[normalize-space(text())='Outputs']")
 		output_tab.click()
 
-		preview_iframe1 = WebElementWrapper.find_with_xpath(self.driver, "//iframe[contains(@src, 'output1.txt')]")
-		preview_iframe1.switch_to_frame()
+	@staticmethod
+	def _get_visualization_iframe(driver: WebDriver, file_name: str) -> WebElementWrapper:
+		return WebElementWrapper.find_with_xpath(driver, f"//iframe[contains(@src, '{file_name}')]")
 
-		output_text1 = WebElementWrapper.find_with_xpath(self.driver, "//pre")
-		assert output_text1.get_text() == "Processed in the preprocessing step: input text"
-		self.driver.switch_to.default_content()
+	@staticmethod
+	def _get_output_file_text(driver: WebDriver, file_name: str) -> str:
+		iframe = TestPluginExecution._get_visualization_iframe(driver, file_name)
+		iframe.switch_to_frame()
+		text = WebElementWrapper.find_with_xpath(driver, "//pre").get_text()
+		driver.switch_to.default_content()
 
-		preview_iframe2 = WebElementWrapper.find_with_xpath(self.driver, "//iframe[contains(@src, 'output2.txt')]")
-		preview_iframe2.switch_to_frame()
-
-		output_text2 = WebElementWrapper.find_with_xpath(self.driver, "//pre")
-		assert output_text2.get_text() == "Processed in the processing step: input text Input from preprocessing: input text"
-		self.driver.switch_to.default_content()
+		return text
 
 	@staticmethod
 	def _check_if_finished(driver: WebDriver):
