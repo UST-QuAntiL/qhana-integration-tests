@@ -74,7 +74,7 @@ class TestPluginExecution(unittest.TestCase):
 		self.driver.implicitly_wait(10)
 
 	def tearDown(self) -> None:
-		self.driver.close()
+		self.driver.quit()
 
 	def test_create_new_experiment(self):
 		self._create_new_experiment(self.driver, "test")
