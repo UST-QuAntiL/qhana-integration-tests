@@ -1,4 +1,13 @@
 services:
+  integration-tests:
+    image: integration-test
+    build: .
+    environment:
+      WAIT_HOSTS: firefox:4444
+      INTEGRATION_TEST_BROWSER: "firefox"
+      INTEGRATION_TEST_REMOTE: "true"
+      INTEGRATION_TEST_REMOTE_URL: "http://firefox:4444"
+      INTEGRATION_TEST_SLEEP_TIME: 1
   firefox:
     image: selenium-proxy
     build: selenium_proxy/

@@ -16,4 +16,8 @@ ADD https://raw.githubusercontent.com/UST-QuAntiL/docker-localhost-proxy/v0.3/Ca
 ADD https://raw.githubusercontent.com/UST-QuAntiL/docker-localhost-proxy/v0.3/start_proxy.sh start_proxy.sh
 RUN chmod +x start_proxy.sh
 
-CMD ./start_proxy.sh && poetry run
+## Add the wait script to the image
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+RUN chmod +x /wait
+
+CMD ./start_proxy.sh && /wait && poetry run python -m unittest plugin_tests
