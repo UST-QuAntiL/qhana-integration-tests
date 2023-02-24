@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from selenium import webdriver
@@ -6,8 +7,26 @@ import helpers
 
 
 class TestPluginExecution(unittest.TestCase):
+	options = {
+		"firefox": webdriver.FirefoxOptions(),
+		"chrome": webdriver.ChromeOptions(),
+	}
+
 	def setUp(self) -> None:
-		self.driver = webdriver.Firefox()
+		browser = os.environ.get("INTEGRATION_TEST_BROWSER", "firefox")
+		remote = os.environ.get("INTEGRATION_TEST_REMOTE", "false").lower() == "true"
+
+		if remote:
+			remote_url = os.environ.get("INTEGRATION_TEST_REMOTE_URL", "http://localhost:4444")
+			self.driver = webdriver.Remote(command_executor=remote_url, options=self.options[browser])
+		else:
+			if browser == "firefox":
+				self.driver = webdriver.Firefox(options=self.options[browser])
+			elif browser == "chrome":
+				self.driver = webdriver.Chrome(options=self.options[browser])
+			else:
+				raise ValueError(f"unsupported browser {browser}")
+
 		self.driver.get("http://localhost:8080")
 		self.driver.implicitly_wait(10)
 
@@ -32,7 +51,7 @@ class TestPluginExecution(unittest.TestCase):
 		helpers.submit_micro_frontend(self.driver)
 
 		self.driver.switch_to.default_content()
-		helpers.wait_for_plugin_to_finish_executing(self.driver, 10)
+		helpers.wait_for_plugin_to_finish_executing(self.driver, 100)
 		helpers.switch_to_outputs_tab(self.driver)
 
 		assert helpers.get_output_file_text(self.driver, "output1.txt") == "Processed in the preprocessing step: input text"

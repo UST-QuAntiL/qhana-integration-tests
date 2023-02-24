@@ -1,3 +1,4 @@
+import os
 import time
 from typing import Callable
 
@@ -5,6 +6,9 @@ from selenium.common import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+
+
+SLEEP_TIME = float(os.environ.get("INTEGRATION_TEST_SLEEP_TIME", 1))
 
 
 class WebElementWrapper:
@@ -28,7 +32,7 @@ class WebElementWrapper:
 
 	def click(self) -> None:
 		try:
-			time.sleep(1)
+			time.sleep(SLEEP_TIME)
 			element = self.find_method()
 			element.click()
 		except StaleElementReferenceException:
@@ -37,7 +41,7 @@ class WebElementWrapper:
 
 	def switch_to_frame(self) -> None:
 		try:
-			time.sleep(1)
+			time.sleep(SLEEP_TIME)
 			element = self.find_method()
 			self.driver.switch_to.frame(element)
 		except StaleElementReferenceException:
@@ -46,7 +50,7 @@ class WebElementWrapper:
 
 	def get_text(self) -> str:
 		try:
-			time.sleep(1)
+			time.sleep(SLEEP_TIME)
 			element = self.find_method()
 
 			return element.text
@@ -56,7 +60,7 @@ class WebElementWrapper:
 
 	def set_text(self, text: str) -> None:
 		try:
-			time.sleep(1)
+			time.sleep(SLEEP_TIME)
 			element = self.find_method()
 			element.send_keys(text)
 		except StaleElementReferenceException:
