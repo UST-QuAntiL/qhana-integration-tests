@@ -1,8 +1,10 @@
 services:
   firefox:
-    image: selenium/standalone-firefox:109.0
+    image: selenium-proxy
+    build: selenium_proxy/
     ports:
       - "4444:4444"
       - "7900:7900"
     environment:
       shm-size: "2g"
+      LOCALHOST_PROXY_PORTS: ":8080 :5006 :9090 :5005"
