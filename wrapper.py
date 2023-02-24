@@ -66,3 +66,7 @@ class WebElementWrapper:
 		except StaleElementReferenceException:
 			print(f"StaleElementReferenceException")
 			self.set_text(text)
+
+	def check_existence(self):
+		time.sleep(SLEEP_TIME)
+		self.find_method()

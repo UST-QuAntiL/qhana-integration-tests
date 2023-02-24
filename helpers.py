@@ -16,6 +16,8 @@ def create_new_experiment(driver: WebDriver, name: str) -> None:
 		driver, "//button[span[normalize-space(text())='Create Experiment']]")
 	create_experiment_button.click()
 
+	WebElementWrapper.find_with_xpath(driver, "//qhana-experiment").check_existence()
+
 
 def switch_to_workspace_tab(driver: WebDriver) -> None:
 	workspace_tab = WebElementWrapper.find_with_xpath(driver, "//a[span[normalize-space(text())='Workspace']]")
