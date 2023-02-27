@@ -20,4 +20,4 @@ RUN chmod +x start_proxy.sh
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
 RUN chmod +x /wait
 
-CMD ./start_proxy.sh && /wait && poetry run python -m unittest plugin_tests
+CMD ./start_proxy.sh && /wait && poetry run python -m unittest src.plugin_tests

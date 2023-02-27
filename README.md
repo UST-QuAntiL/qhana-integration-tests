@@ -17,10 +17,20 @@ To see what is going on inside the Firefox container, open the URL [http://local
 2. install dependencies with `poetry install`
 3. have the [QHAna docker compose](https://github.com/UST-QuAntiL/qhana-docker) running
 4. run integration tests on Firefox or Chrome
-   1. Firefox: `poetry run python -m unittest plugin_tests`
-   2. Chrome: `INTEGRATION_TEST_BROWSER=chrome poetry run python -m unittest plugin_tests`
+   1. Firefox: `poetry run python -m unittest src.plugin_tests`
+   2. Chrome: `INTEGRATION_TEST_BROWSER=chrome poetry run python -m unittest src.plugin_tests`
 
 The first run can take a while to start, because it needs to download the driver for the browser.
+
+## Output
+
+The last output of the `integration-tests` container or the command on the host machine should look like this:
+```
+----------------------------------------------------------------------
+Ran 2 tests in 116.572s
+
+OK
+```
 
 ## Troubleshooting
 

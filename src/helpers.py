@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
-from wrapper import WebElementWrapper
+from src.wrapper import WebElementWrapper
 
 
 def create_new_experiment(driver: WebDriver, name: str) -> None:

@@ -3,7 +3,7 @@ import unittest
 
 from selenium import webdriver
 
-import helpers
+from src import helpers
 
 
 class TestPluginExecution(unittest.TestCase):
