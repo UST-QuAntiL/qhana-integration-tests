@@ -36,7 +36,7 @@ class WebElementWrapper:
 			element = self.find_method()
 			element.click()
 		except StaleElementReferenceException:
-			print(f"StaleElementReferenceException")
+			print("INFO: caught StaleElementReferenceException")
 			self.click()
 
 	def switch_to_frame(self) -> None:
@@ -45,7 +45,7 @@ class WebElementWrapper:
 			element = self.find_method()
 			self.driver.switch_to.frame(element)
 		except StaleElementReferenceException:
-			print(f"StaleElementReferenceException")
+			print("INFO: caught StaleElementReferenceException")
 			self.switch_to_frame()
 
 	def get_text(self) -> str:
@@ -55,7 +55,7 @@ class WebElementWrapper:
 
 			return element.text
 		except StaleElementReferenceException:
-			print(f"StaleElementReferenceException")
+			print("INFO: caught StaleElementReferenceException")
 			return self.get_text()
 
 	def set_text(self, text: str) -> None:
@@ -64,7 +64,7 @@ class WebElementWrapper:
 			element = self.find_method()
 			element.send_keys(text)
 		except StaleElementReferenceException:
-			print(f"StaleElementReferenceException")
+			print("INFO: caught StaleElementReferenceException")
 			self.set_text(text)
 
 	def check_existence(self):
