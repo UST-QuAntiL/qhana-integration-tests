@@ -1,7 +1,10 @@
+import time
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
+from src import wrapper
 from src.wrapper import WebElementWrapper
 
 
@@ -34,14 +37,26 @@ def get_micro_frontend_iframe(driver: WebDriver) -> WebElementWrapper:
 	return WebElementWrapper.find_with_xpath(driver, "//iframe[@class='frontend-frame']")
 
 
-def get_micro_frontend_input_field(driver: WebDriver, field_name: str) -> WebElementWrapper:
+def get_micro_frontend_text_area(driver: WebDriver, field_name: str) -> WebElementWrapper:
 	return WebElementWrapper.find_with_xpath(driver, f"//textarea[@name='{field_name}']")
 
 
+def get_micro_frontend_input(driver: WebDriver, field_name: str) -> WebElementWrapper:
+	return WebElementWrapper.find_with_xpath(driver, f"//input[@name='{field_name}']")
+
+
 def submit_micro_frontend(driver: WebDriver) -> None:
-	submit_button = WebElementWrapper.find_with_xpath(
-		driver, "//button[@class='qhana-form-submit'][text()='submit']")
-	submit_button.click()
+	use_dirty_hack = True
+
+	if use_dirty_hack:
+		time.sleep(wrapper.SLEEP_TIME)
+		# this dirty hack is needed because the webdrivers have sometimes problems with scrolling to the button
+		driver.execute_script(
+			"document.evaluate(\"//button[@class='qhana-form-submit'][text()='submit']\", document).iterateNext().click()")
+	else:
+		submit_button = WebElementWrapper.find_with_xpath(
+			driver, "//button[@class='qhana-form-submit'][text()='submit']")
+		submit_button.click()
 
 
 def switch_to_outputs_tab(driver: WebDriver) -> None:
@@ -75,3 +90,15 @@ def wait_for_plugin_to_finish_executing(driver: WebDriver, timeout: int) -> None
 		raise RuntimeError(f"status is {status}")
 
 	WebDriverWait(driver, timeout=timeout).until(_check_if_finished)
+
+
+def get_output_file_link(driver: WebDriver, file_name: str) -> str:
+	return driver.find_element(By.XPATH, f"//a[contains(@href, '{file_name}')]").get_property("href")
+
+
+def choose_file(driver: WebDriver, button_data_input_id: str, file_name: str) -> None:
+	get_micro_frontend_iframe(driver).switch_to_frame()
+	WebElementWrapper.find_with_xpath(driver, f"//button[@data-input-id = '{button_data_input_id}']").click()
+	driver.switch_to.default_content()
+	WebElementWrapper.find_with_xpath(driver, f"//span[normalize-space(text())='{file_name}']").click()
+	WebElementWrapper.find_with_xpath(driver, "//button[span[normalize-space(text())='Choose']]").click()

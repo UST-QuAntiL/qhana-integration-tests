@@ -7,7 +7,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-
 SLEEP_TIME = float(os.environ.get("INTEGRATION_TEST_SLEEP_TIME", 1))
 
 
