@@ -1,4 +1,4 @@
-FROM selenium/standalone-firefox:109.0
+FROM seleniarm/standalone-chromium:110.0
 
 USER root
 
