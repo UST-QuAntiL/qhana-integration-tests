@@ -28,7 +28,7 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
             - name: Extract metadata (tags, labels) for Docker
-              id: meta
+              id: meta1
               uses: docker/metadata-action@v4
               with:
                 images: ${{ env.REGISTRY }}/${{ env.CHROME_IMAGE_NAME }}
@@ -41,7 +41,7 @@ jobs:
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
             - name: Extract metadata (tags, labels) for Docker
-              id: meta
+              id: meta2
               uses: docker/metadata-action@v4
               with:
                 images: ${{ env.REGISTRY }}/${{ env.INTEGRATION_TEST_IMAGE_NAME }}
