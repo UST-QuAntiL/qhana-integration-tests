@@ -1,0 +1,107 @@
+name: Run integration tests
+
+on:
+  workflow_call:
+    inputs:
+      plugin-runner-image:
+        default: "ghcr.io/ust-quantil/qhana-plugin-runner:main"
+        required: false
+        type: string
+      backend-image:
+        default: "ghcr.io/ust-quantil/qhana-backend:main"
+        required: false
+        type: string
+      ui-image:
+        default: "ghcr.io/ust-quantil/qhana-ui:main"
+        required: false
+        type: string
+      registry-image:
+        default: "ghcr.io/ust-quantil/qhana-plugin-registry:main"
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      plugin-runner-image:
+        default: "ghcr.io/ust-quantil/qhana-plugin-runner:main"
+        required: false
+        type: string
+      backend-image:
+        default: "ghcr.io/ust-quantil/qhana-backend:main"
+        required: false
+        type: string
+      ui-image:
+        default: "ghcr.io/ust-quantil/qhana-ui:main"
+        required: false
+        type: string
+      registry-image:
+        default: "ghcr.io/ust-quantil/qhana-plugin-registry:main"
+        required: false
+        type: string
+
+env:
+  PLUGIN_RUNNER_IMAGE: ${{ inputs.plugin-runner-image }}
+  BACKEND_IMAGE: ${{ inputs.backend-image }}
+  UI_IMAGE: ${{ inputs.ui-image }}
+  REGISTRY_IMAGE: ${{ inputs.registry-image }}
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download docker compose file
+        uses: snow-actions/sparse-checkout@v1.2.0
+        with:
+          patterns: .github/workflows/docker-compose.yml
+          repository: PhilWun/qhana-integration-tests
+          path: integration_tests
+      - name: start docker compose
+        run: docker compose -f integration_tests/.github/workflows/docker-compose.yml up -d
+      - name: wait for backend
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: "http://localhost:9091"
+          responseCode: 200
+          timeout: 600000
+          interval: 1000
+      - name: wait for UI
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: "http://localhost:8080"
+          responseCode: 200
+          timeout: 600000
+          interval: 1000
+      - name: wait for registry
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: "http://localhost:5006"
+          responseCode: 200
+          timeout: 600000
+          interval: 1000
+      - name: wait for plugin runner
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: "http://localhost:5005"
+          responseCode: 200
+          timeout: 600000
+          interval: 1000
+      - name: wait for Chrome
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: "http://localhost:4444"
+          responseCode: 200
+          timeout: 600000
+          interval: 1000
+      - name: wait for registry to fetch plugins
+        uses: GuillaumeFalourd/wait-sleep-action@v1
+        with:
+          time: '2m'
+      - name: install poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+      - name: install dependencies
+        env:
+          PATH: "/root/.local/bin:"${{ PATH }}
+        run: poetry install
+      - name: run integration tests
+        env:
+          PATH: "/root/.local/bin:"${{ PATH }}
+        run: poetry run python -m unittest src.plugin_tests
