@@ -76,8 +76,8 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: install dependencies
         env:
-          PATH: "/root/.local/bin:${{ env.PATH }}"
-        run: poetry install
+          PATH: "~/.local/bin:${{ env.PATH }}"
+        run: echo $PATH && poetry install
       - name: run integration tests
         env:
           PATH: "/root/.local/bin:${{ env.PATH }}"
