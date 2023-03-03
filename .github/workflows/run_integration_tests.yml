@@ -56,41 +56,18 @@ jobs:
           path: integration_tests
       - name: start docker compose
         run: docker compose -f integration_tests/.github/docker-compose.yml up -d
+      - name: download wait script
+        run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
       - name: wait for backend
-        uses: nev7n/wait_for_response@v1
-        with:
-          url: "http://localhost:9091"
-          responseCode: 200
-          timeout: 600000
-          interval: 1000
+        run: "./wait-for http://localhost:9091 -t 600"
       - name: wait for UI
-        uses: nev7n/wait_for_response@v1
-        with:
-          url: "http://localhost:8080"
-          responseCode: 200
-          timeout: 600000
-          interval: 1000
-      - name: wait for registry
-        uses: nev7n/wait_for_response@v1
-        with:
-          url: "http://localhost:5006"
-          responseCode: 200
-          timeout: 600000
-          interval: 1000
+        run: "./wait-for http://localhost:8080 -t 600"
       - name: wait for plugin runner
-        uses: nev7n/wait_for_response@v1
-        with:
-          url: "http://localhost:5005"
-          responseCode: 200
-          timeout: 600000
-          interval: 1000
+        run: "./wait-for http://localhost:5005 -t 600"
       - name: wait for Chrome
-        uses: nev7n/wait_for_response@v1
-        with:
-          url: "http://localhost:4444"
-          responseCode: 200
-          timeout: 600000
-          interval: 1000
+        run: "./wait-for http://localhost:4444 -t 600"
+      - name: wait for registry
+        run: "./wait-for http://localhost:5006 -t 600"
       - name: wait for registry to fetch plugins
         uses: GuillaumeFalourd/wait-sleep-action@v1
         with:
