@@ -128,8 +128,7 @@ services:
       PLUGIN_DISCOVERY_INTERVAL: 60
       PERIODIC_SCHEDULER: true
   chrome:
-    image: selenium-proxy
-    build: selenium_proxy/
+    image: ghcr.io/philwun/selenium-chrome-proxy:master
     ports:
       - "4444:4444"
       - "7900:7900"
