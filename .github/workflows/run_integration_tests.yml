@@ -67,7 +67,7 @@ jobs:
       - name: wait for Chrome
         run: "./wait-for http://localhost:4444 -t 600"
       - name: wait for registry
-        run: "./wait-for http://localhost:5006 -t 600"
+        run: "./wait-for http://localhost:5006/api/ -t 600"
       - name: wait for registry to fetch plugins
         uses: GuillaumeFalourd/wait-sleep-action@v1
         with:
