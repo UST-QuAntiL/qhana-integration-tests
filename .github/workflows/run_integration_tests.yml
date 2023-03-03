@@ -51,7 +51,7 @@ jobs:
       - name: download docker compose file
         uses: snow-actions/sparse-checkout@v1.2.0
         with:
-          patterns: .github/workflows/docker-compose.yml
+          patterns: .github/docker-compose.yml
           repository: PhilWun/qhana-integration-tests
           path: integration_tests
       - name: start docker compose
@@ -99,9 +99,9 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: install dependencies
         env:
-          PATH: "/root/.local/bin:"${{ PATH }}
+          PATH: "/root/.local/bin:${{ PATH }}"
         run: poetry install
       - name: run integration tests
         env:
-          PATH: "/root/.local/bin:"${{ PATH }}
+          PATH: "/root/.local/bin:${{ PATH }}"
         run: poetry run python -m unittest src.plugin_tests
