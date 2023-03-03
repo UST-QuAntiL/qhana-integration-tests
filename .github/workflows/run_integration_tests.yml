@@ -48,12 +48,11 @@ jobs:
   integration-tests:
     runs-on: ubuntu-latest
     steps:
-#      - name: download docker compose file
-#        uses: snow-actions/sparse-checkout@v1.2.0
-#        with:
-#          patterns: .github/docker-compose.yml
-#          repository: PhilWun/qhana-integration-tests
-#          path: integration_tests
+      - name: clone integration tests
+        uses: actions/checkout@v3
+        with:
+          repository: PhilWun/qhana-integration-tests
+          path: integration_tests
 #      - name: start docker compose
 #        run: docker compose -f integration_tests/.github/docker-compose.yml up -d
 #      - name: download wait script
@@ -75,8 +74,8 @@ jobs:
       - name: install poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: install dependencies
-        run: export PATH="~/.local/bin:$PATH" && echo $PATH && poetry install
+        run: export PATH="~/.local/bin:$PATH" && poetry install
+        working-directory: ./integration_tests
       - name: run integration tests
-        env:
-          PATH: "/root/.local/bin:${{ env.PATH }}"
-        run: poetry run python -m unittest src.plugin_tests
+        run: export PATH="~/.local/bin:$PATH" && poetry run python -m unittest src.plugin_tests
+        working-directory: ./integration_tests
