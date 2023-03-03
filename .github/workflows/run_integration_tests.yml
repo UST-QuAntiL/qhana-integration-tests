@@ -48,30 +48,30 @@ jobs:
   integration-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: download docker compose file
-        uses: snow-actions/sparse-checkout@v1.2.0
-        with:
-          patterns: .github/docker-compose.yml
-          repository: PhilWun/qhana-integration-tests
-          path: integration_tests
-      - name: start docker compose
-        run: docker compose -f integration_tests/.github/docker-compose.yml up -d
-      - name: download wait script
-        run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
-      - name: wait for backend
-        run: "./wait-for http://localhost:9091 -t 600"
-      - name: wait for UI
-        run: "./wait-for http://localhost:8080 -t 600"
-      - name: wait for plugin runner
-        run: "./wait-for http://localhost:5005 -t 600"
-      - name: wait for Chrome
-        run: "./wait-for http://localhost:4444 -t 600"
-      - name: wait for registry
-        run: "./wait-for http://localhost:5006/api/ -t 600"
-      - name: wait for registry to fetch plugins
-        uses: GuillaumeFalourd/wait-sleep-action@v1
-        with:
-          time: '2m'
+#      - name: download docker compose file
+#        uses: snow-actions/sparse-checkout@v1.2.0
+#        with:
+#          patterns: .github/docker-compose.yml
+#          repository: PhilWun/qhana-integration-tests
+#          path: integration_tests
+#      - name: start docker compose
+#        run: docker compose -f integration_tests/.github/docker-compose.yml up -d
+#      - name: download wait script
+#        run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
+#      - name: wait for backend
+#        run: "./wait-for http://localhost:9091 -t 600"
+#      - name: wait for UI
+#        run: "./wait-for http://localhost:8080 -t 600"
+#      - name: wait for plugin runner
+#        run: "./wait-for http://localhost:5005 -t 600"
+#      - name: wait for Chrome
+#        run: "./wait-for http://localhost:4444 -t 600"
+#      - name: wait for registry
+#        run: "./wait-for http://localhost:5006/api/ -t 600"
+#      - name: wait for registry to fetch plugins
+#        uses: GuillaumeFalourd/wait-sleep-action@v1
+#        with:
+#          time: '2m'
       - name: install poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: install dependencies
