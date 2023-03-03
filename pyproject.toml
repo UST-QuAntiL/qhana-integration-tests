@@ -6,7 +6,7 @@ authors = ["Philipp Wundrack <philipp.wundrack@live.de>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 selenium = "^4.8.2"
 
 
