@@ -48,6 +48,10 @@ jobs:
   integration-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
       - name: clone integration tests
         uses: actions/checkout@v3
         with:
