@@ -82,5 +82,5 @@ jobs:
           INTEGRATION_TEST_BROWSER: "chrome"
           INTEGRATION_TEST_REMOTE: "true"
           INTEGRATION_TEST_REMOTE_URL: "http://localhost:4444"
-          INTEGRATION_TEST_SLEEP_TIME: 20
+          INTEGRATION_TEST_SLEEP_TIME: 5
         working-directory: ./integration_tests
