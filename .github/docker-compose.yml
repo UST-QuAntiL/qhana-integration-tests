@@ -135,7 +135,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      shm-size: "2g"
+      shm-size: "4g"
       LOCALHOST_PROXY_PORTS: ":8080 :5006 :9091 :5005"
 
 volumes:
