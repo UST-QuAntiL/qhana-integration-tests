@@ -53,24 +53,24 @@ jobs:
         with:
           repository: PhilWun/qhana-integration-tests
           path: integration_tests
-#      - name: start docker compose
-#        run: docker compose -f integration_tests/.github/docker-compose.yml up -d
-#      - name: download wait script
-#        run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
-#      - name: wait for backend
-#        run: "./wait-for http://localhost:9091 -t 600"
-#      - name: wait for UI
-#        run: "./wait-for http://localhost:8080 -t 600"
-#      - name: wait for plugin runner
-#        run: "./wait-for http://localhost:5005 -t 600"
-#      - name: wait for Chrome
-#        run: "./wait-for http://localhost:4444 -t 600"
-#      - name: wait for registry
-#        run: "./wait-for http://localhost:5006/api/ -t 600"
-#      - name: wait for registry to fetch plugins
-#        uses: GuillaumeFalourd/wait-sleep-action@v1
-#        with:
-#          time: '2m'
+      - name: start docker compose
+        run: docker compose -f integration_tests/.github/docker-compose.yml up -d
+      - name: download wait script
+        run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
+      - name: wait for backend
+        run: "./wait-for http://localhost:9091 -t 600"
+      - name: wait for UI
+        run: "./wait-for http://localhost:8080 -t 600"
+      - name: wait for plugin runner
+        run: "./wait-for http://localhost:5005 -t 600"
+      - name: wait for Chrome
+        run: "./wait-for http://localhost:4444 -t 600"
+      - name: wait for registry
+        run: "./wait-for http://localhost:5006/api/ -t 600"
+      - name: wait for registry to fetch plugins
+        uses: GuillaumeFalourd/wait-sleep-action@v1
+        with:
+          time: '2m'
       - name: install poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: install dependencies
@@ -78,4 +78,9 @@ jobs:
         working-directory: ./integration_tests
       - name: run integration tests
         run: export PATH="~/.local/bin:$PATH" && poetry run python -m unittest src.plugin_tests
+        env:
+          INTEGRATION_TEST_BROWSER: "chrome"
+          INTEGRATION_TEST_REMOTE: "true"
+          INTEGRATION_TEST_REMOTE_URL: "http://chrome:4444"
+          INTEGRATION_TEST_SLEEP_TIME: 5
         working-directory: ./integration_tests
