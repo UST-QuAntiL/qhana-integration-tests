@@ -126,7 +126,7 @@ services:
       SQLALCHEMY_DATABASE_URI: "postgresql+psycopg2://user:password@postgres-registry:5432/default_db"
       LOCALHOST_PROXY_PORTS: *localhost-proxy-ports
       PLUGIN_DISCOVERY_INTERVAL: 60
-      PERIODIC_SCHEDULER: true
+      PERIODIC_SCHEDULER: "true"
   chrome:
     image: ghcr.io/philwun/selenium-chrome-proxy:master
     ports:
