@@ -136,7 +136,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       shm-size: "2g"
-      LOCALHOST_PROXY_PORTS: ":8080 :5006 :9090 :5005"
+      LOCALHOST_PROXY_PORTS: ":8080 :5006 :9091 :5005"
 
 volumes:
   minio:
