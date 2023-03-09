@@ -93,6 +93,7 @@ jobs:
           name: chrome-log
           path: chrome.log
       - name: Store hardware usage to file
+        if: always()
         run: top -bn1 > hardware_usage.txt
       - name: Store hardware usage as artifact
         uses: actions/upload-artifact@v3
