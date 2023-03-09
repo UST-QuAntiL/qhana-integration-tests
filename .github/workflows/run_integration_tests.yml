@@ -54,7 +54,7 @@ jobs:
           repository: PhilWun/qhana-integration-tests
           path: integration_tests
       - name: start docker compose
-        run: docker compose -f integration_tests/.github/docker-compose.yml up -d
+        run: docker compose -f integration_tests/.github/docker-compose.yml up -d --quiet-pull
       - name: Save chrome log to file
         run: docker-compose --file integration_tests/.github/docker-compose.yml logs --follow chrome > chrome.log &
       - name: download wait script
