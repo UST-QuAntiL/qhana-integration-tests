@@ -15,7 +15,7 @@ class TestPluginExecution(unittest.TestCase):
 		"chrome": webdriver.ChromeOptions(),
 	}
 
-	options["chrome"].add_argument("--no-sandbox")
+	options["chrome"].add_argument("--disable-dev-shm-usage")
 
 	def setUp(self) -> None:
 		browser = os.environ.get("INTEGRATION_TEST_BROWSER", "firefox")
