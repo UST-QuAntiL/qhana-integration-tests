@@ -6,6 +6,9 @@ from selenium import webdriver
 from src import helpers
 
 
+QHANA_UI_URL = os.environ.get("QHANA_UI_URL", "http://localhost:8080")
+
+
 class TestPluginExecution(unittest.TestCase):
 	options = {
 		"firefox": webdriver.FirefoxOptions(),
@@ -27,7 +30,7 @@ class TestPluginExecution(unittest.TestCase):
 			else:
 				raise ValueError(f"unsupported browser {browser}")
 
-		self.driver.get("http://localhost:8080")
+		self.driver.get(QHANA_UI_URL)
 		self.driver.implicitly_wait(10)
 
 	def tearDown(self) -> None:
