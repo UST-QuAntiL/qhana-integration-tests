@@ -15,6 +15,8 @@ class TestPluginExecution(unittest.TestCase):
 		"chrome": webdriver.ChromeOptions(),
 	}
 
+	options["chrome"].add_argument("--no-sandbox")
+
 	def setUp(self) -> None:
 		browser = os.environ.get("INTEGRATION_TEST_BROWSER", "firefox")
 		remote = os.environ.get("INTEGRATION_TEST_REMOTE", "false").lower() == "true"
@@ -80,7 +82,7 @@ class TestPluginExecution(unittest.TestCase):
 
 		# Wu Palmer similarities
 		helpers.switch_to_workspace_tab(self.driver)
-		helpers.open_plugin(self.driver, "Wu Palmer similarities")
+		helpers.open_plugin(self.driver, "Wu Palmer similarities")  # FIXME: crash
 
 		helpers.choose_file(self.driver, "entities_url", "entities.json")
 		helpers.choose_file(self.driver, "entities_metadata_url", "attribute_metadata.json")
@@ -108,7 +110,7 @@ class TestPluginExecution(unittest.TestCase):
 
 		# Similarities to distances transformers
 		helpers.switch_to_workspace_tab(self.driver)
-		helpers.open_plugin(self.driver, "Similarities to distances transformers")
+		helpers.open_plugin(self.driver, "Similarities to distances transformers")  # FIXME: crash
 
 		helpers.choose_file(self.driver, "attribute_similarities_url", "sym_max_mean.zip")
 		helpers.get_micro_frontend_iframe(self.driver).switch_to_frame()
@@ -120,7 +122,7 @@ class TestPluginExecution(unittest.TestCase):
 
 		# Aggregators
 		helpers.switch_to_workspace_tab(self.driver)
-		helpers.open_plugin(self.driver, "Aggregators")
+		helpers.open_plugin(self.driver, "Aggregators")  # FIXME: crash
 
 		helpers.choose_file(self.driver, "attribute_distances_url", "attr_dist.zip")
 		helpers.get_micro_frontend_iframe(self.driver).switch_to_frame()
