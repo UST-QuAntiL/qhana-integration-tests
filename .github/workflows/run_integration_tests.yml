@@ -2,7 +2,7 @@ name: Run integration tests
 
 on:
   workflow_call:
-    inputs:
+    inputs: &workflow_inputs
       plugin-runner-image:
         default: "ghcr.io/ust-quantil/qhana-plugin-runner:main"
         required: false
@@ -20,23 +20,7 @@ on:
         required: false
         type: string
   workflow_dispatch:
-    inputs:
-      plugin-runner-image:
-        default: "ghcr.io/ust-quantil/qhana-plugin-runner:main"
-        required: false
-        type: string
-      backend-image:
-        default: "ghcr.io/ust-quantil/qhana-backend:main"
-        required: false
-        type: string
-      ui-image:
-        default: "ghcr.io/ust-quantil/qhana-ui:main"
-        required: false
-        type: string
-      registry-image:
-        default: "ghcr.io/ust-quantil/qhana-plugin-registry:main"
-        required: false
-        type: string
+    inputs: *workflow_inputs
 
 env:
   PLUGIN_RUNNER_IMAGE: ${{ inputs.plugin-runner-image }}
@@ -59,8 +43,6 @@ jobs:
           path: integration_tests
       - name: start docker compose
         run: docker compose -f integration_tests/.github/docker-compose.yml up -d --quiet-pull
-      - name: Save chrome log to file
-        run: docker-compose --file integration_tests/.github/docker-compose.yml logs --follow chrome > chrome.log 2>&1 &
       - name: download wait script
         run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
       - name: wait for backend
@@ -90,18 +72,3 @@ jobs:
           INTEGRATION_TEST_REMOTE_URL: "http://localhost:4444"
           INTEGRATION_TEST_SLEEP_TIME: 5
         working-directory: ./integration_tests
-      - name: Store chrome log
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: chrome-log
-          path: chrome.log
-      - name: Store hardware usage to file
-        if: always()
-        run: top -bn1 > hardware_usage.txt
-      - name: Store hardware usage as artifact
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: hardware-usage
-          path: hardware_usage.txt
