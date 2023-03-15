@@ -60,7 +60,7 @@ jobs:
       - name: start docker compose
         run: docker compose -f integration_tests/.github/docker-compose.yml up -d --quiet-pull
       - name: Save container logs to file
-        run: docker-compose -f integration_tests/.github/docker-compose.yml logs --follow --no-color --no-log-prefix > containers.log &
+        run: docker-compose -f integration_tests/.github/docker-compose.yml logs --follow --no-color > containers.log &
       - name: download wait script
         run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
       - name: wait for backend
