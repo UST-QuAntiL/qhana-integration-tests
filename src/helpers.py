@@ -98,7 +98,16 @@ def get_output_file_link(driver: WebDriver, file_name: str) -> str:
 
 def choose_file(driver: WebDriver, button_data_input_id: str, file_name: str) -> None:
 	get_micro_frontend_iframe(driver).switch_to_frame()
-	WebElementWrapper.find_with_xpath(driver, f"//button[@data-input-id = '{button_data_input_id}']").click()
+	use_dirty_hack = True
+
+	if use_dirty_hack:
+		# this dirty hack is needed because the Firefox webdriver has a problem with clicking the button
+		time.sleep(wrapper.SLEEP_TIME)
+		driver.execute_script(
+			f"document.evaluate(\"//button[@data-input-id = '{button_data_input_id}']\", document).iterateNext().click()")
+	else:
+		WebElementWrapper.find_with_xpath(driver, f"//button[@data-input-id = '{button_data_input_id}']").click()
+
 	driver.switch_to.default_content()
 	WebElementWrapper.find_with_xpath(driver, f"//span[normalize-space(text())='{file_name}']").click()
 	WebElementWrapper.find_with_xpath(driver, "//button[span[normalize-space(text())='Choose']]").click()
