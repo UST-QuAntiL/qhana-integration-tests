@@ -59,6 +59,8 @@ jobs:
           path: integration_tests
       - name: start docker compose
         run: docker compose -f integration_tests/.github/docker-compose.yml up -d --quiet-pull
+      - name: Save container logs to file
+        run: docker-compose -f integration_tests/.github/docker-compose.yml logs --follow > containers.log &
       - name: download wait script
         run: wget https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && chmod +x wait-for
       - name: wait for backend
@@ -88,3 +90,9 @@ jobs:
           INTEGRATION_TEST_REMOTE_URL: "http://localhost:4444"
           INTEGRATION_TEST_SLEEP_TIME: 5
         working-directory: ./integration_tests
+      - name: Store container logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: container-logs
+          path: containers.log
