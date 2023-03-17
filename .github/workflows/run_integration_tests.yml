@@ -55,7 +55,7 @@ jobs:
       - name: clone integration tests
         uses: actions/checkout@v3
         with:
-          repository: PhilWun/qhana-integration-tests
+          repository: UST-QuAntiL/qhana-integration-tests
           path: integration_tests
       - name: start docker compose
         run: docker compose -f integration_tests/.github/docker-compose.yml up -d --quiet-pull
