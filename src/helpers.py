@@ -10,7 +10,7 @@ from src.wrapper import WebElementWrapper
 
 def create_new_experiment(driver: WebDriver, name: str) -> None:
 	new_experiment_button = WebElementWrapper.find_with_xpath(
-		driver, "//button[span[text()='New Experiment']]")
+		driver, "//button[span[normalize-space(text())='New Experiment']]")
 	new_experiment_button.click()
 
 	WebElementWrapper.find_active_element(driver).set_text(name)
