@@ -30,8 +30,9 @@ class WebElementWrapper:
 		return WebElementWrapper(driver, _find_method)
 
 	def click(self) -> None:
+		time.sleep(SLEEP_TIME)
+
 		try:
-			time.sleep(SLEEP_TIME)
 			element = self.find_method()
 			element.click()
 		except StaleElementReferenceException:

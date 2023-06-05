@@ -1,5 +1,7 @@
 import time
 
+from selenium.common import NoSuchElementException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
@@ -28,6 +30,17 @@ def switch_to_workspace_tab(driver: WebDriver) -> None:
 
 
 def open_plugin(driver: WebDriver, plugin_name: str) -> None:
+	open_more_button = WebElementWrapper.find_with_xpath(
+		driver, f"//span[normalize-space(text())='load more']")
+
+	for _ in range(5):
+		try:
+			open_more_button.click()
+		except NoSuchElementException:
+			break
+
+	ActionChains(driver).scroll_by_amount(0, -1000).perform()
+
 	plugin_list_item = WebElementWrapper.find_with_xpath(
 		driver, f"//span[starts-with(text(), '{plugin_name}')]")
 	plugin_list_item.click()
