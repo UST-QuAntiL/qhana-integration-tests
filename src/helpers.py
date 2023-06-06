@@ -1,6 +1,6 @@
 import time
 
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, ElementClickInterceptedException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -39,11 +39,16 @@ def open_plugin(driver: WebDriver, plugin_name: str) -> None:
 		except NoSuchElementException:
 			break
 
-	ActionChains(driver).scroll_by_amount(0, -1000).perform()
-
 	plugin_list_item = WebElementWrapper.find_with_xpath(
 		driver, f"//span[starts-with(text(), '{plugin_name}')]")
-	plugin_list_item.click()
+
+	for _ in range(5):
+		try:
+			plugin_list_item.click()
+			break
+		except ElementClickInterceptedException:
+			# scroll up when the element is covered by the search bar
+			ActionChains(driver).scroll_by_amount(0, -1000).perform()
 
 
 def get_micro_frontend_iframe(driver: WebDriver) -> WebElementWrapper:
