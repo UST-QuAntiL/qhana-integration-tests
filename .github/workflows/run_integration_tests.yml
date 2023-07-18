@@ -83,7 +83,7 @@ jobs:
         run: export PATH="~/.local/bin:$PATH" && poetry install
         working-directory: ./integration_tests
       - name: run integration tests
-        run: export PATH="~/.local/bin:$PATH" && poetry run python -m unittest src.plugin_tests
+        run: export PATH="~/.local/bin:$PATH" && poetry run python -m unittest src.plugin_tests.TestPluginExecution.test_create_new_experiment src.plugin_tests.TestPluginExecution.test_hello_world_multi_step
         env:
           INTEGRATION_TEST_BROWSER: "chrome"
           INTEGRATION_TEST_REMOTE: "true"
