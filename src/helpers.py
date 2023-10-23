@@ -78,7 +78,7 @@ def submit_micro_frontend(driver: WebDriver) -> None:
 
 
 def switch_to_outputs_tab(driver: WebDriver) -> None:
-	output_tab = WebElementWrapper.find_with_xpath(driver, "//a[normalize-space(text())='Outputs']")
+	output_tab = WebElementWrapper.find_with_xpath(driver, "//span[normalize-space(text())='Outputs']")
 	output_tab.click()
 
 
